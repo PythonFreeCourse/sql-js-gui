@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>משחקים ב־SQL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.js"></script>
+    <style>
+      h1, h2 h3, p, form, main, footer {
+        direction: rtl;
+        text-align: right;
+      }
+
+      textarea, #code-section, table, table * {
+        direction: ltr;
+        text-align: left;
+      }
+
+      #results table {
+        width: 100%;
+      }
+
+      h1, h2, h3 {
+        text-align: center;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        padding: 0.5rem;
+        width: 100%;
+        text-align: center;
+        background: #aaa;
+        color: white;
+        margin-top: 2em;
+        text-decoration: white;
+      }
+
+      footer > a:link {
+        color: white;
+      }
+
+      footer > a:visited {
+        color: #d9d9d9;
+      }
+
+      .dropzone {
+        align-items: center;
+        background: white;
+        border-radius: 5px !important;
+        border: 2px dashed #0087f7 !important;
+        display: flex;
+        justify-content: center;
+        min-height: 30vh !important;
+      }
+
+      #dropzone {
+        width: 60%;
+        height: 60%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 5%;
+      }
+
+      #buttons {
+        margin: 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0.5rem;
+        width: max-content;
+      }
+
+      #error {
+        width: 60%;
+        margin-top: 3rem;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+      }
+
+      #results {
+        margin-bottom: 3rem;
+      }
+    </style>
+    <link rel="stylesheet" href="dropzone.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>הריצו את ה־SQL שלכם</h1>
+
+      <main>
+        <div id="dropzone">
+          <form action="/upload" class="dropzone needsclick dz-clickable" id="demo-upload">
+            <div class="dz-message needsclick">
+              <button type="button" name='file' id='dbfile' class="dz-button">גררו לכאן את קובץ מסד הנתונים, או לחצו ובחרו אותו מהמחשב שלכם.</button>
+            </div>
+          </form>
+        </div>
+        <div id="query" class="visually-hidden">
+          <label for='commands'>הזינו שאילתה:</label>
+          <br>
+
+          <div id="code-section">
+            <textarea id="commands">SELECT * FROM movies;</textarea>
+          </div>
+
+
+          <div id="buttons">
+            <button id="execute" class="btn btn-primary">הריצו</button>
+            <button id='savedb' class="btn btn-secondary">שמרו</button>
+          </div>
+        </div>
+
+        <div id="results">
+          <div id="error" class="error" role="alert"></div>
+          <pre id="output"></pre>
+        </div>
+      </main>
+
+
+      <footer>
+        אנחנו משתמשים ב־<a href='https://github.com/sql-js/sql.js'>sql.js</a> כמנוע.
+        רוב ה־GUI נכתב על־ידי ים מסיקה, עבור קורס פייתון (<a href='https://github.com/PythonFreeCourse/sql-js-gui'>sql-js-gui</a>).
+      </footer>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/mode/sql/sql.min.js"></script>
+    <script type="text/javascript" src="dropzone.min.js"></script>
+    <script type="text/javascript" src="gui.js"></script>
+  </body>
+</html>
