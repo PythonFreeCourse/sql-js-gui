@@ -14,13 +14,19 @@
         text-align: right;
       }
 
-      textarea, #code-section, table, table * {
+      textarea, #code-section, table, table *, pre {
         direction: ltr;
         text-align: left;
       }
 
+      pre {
+        box-shadow: 2px 2px 65px -35px rgba(0,0,0,0.88);
+      }
+
       #results table {
         width: 100%;
+        word-wrap: normal;
+        white-space: normal;
       }
 
       h1, h2, h3 {
