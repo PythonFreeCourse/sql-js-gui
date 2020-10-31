@@ -6,6 +6,8 @@ const dbFileElm = document.getElementById('dbfile');
 const savedbElm = document.getElementById('savedb');
 const querySection = document.getElementById('query');
 const uploadSection = document.getElementById('dropzone');
+const promptArea = document.getElementById('prompt-area');
+const artificialLimit = 5000;
 
 // Start the worker in which sql.js will run
 const worker = new Worker("worker.sql-wasm.js");
@@ -31,11 +33,47 @@ function noerror() {
   errorElm.classList.remove('alert', 'alert-danger');
 }
 
+function showResults(results, maxRows) {
+  tic();
+  outputElm.innerHTML = "";
+  for (let i = 0; i < results.length; i++) {
+    let table = tableCreate(results[i].columns, results[i].values, maxRows);
+    outputElm.appendChild(table);
+  }
+  toc("Displaying results");
+}
+
+function askUserIfToShowEverything(results) {
+  promptArea.classList.remove('visually-hidden');
+  promptArea.innerHTML = `
+    <div class="group-question">
+      <p>השאילתה מחזירה הרבה תוצאות. להציג את כולן?</p>
+      <div class="grouped-buttons">
+        <button class="btn btn-success">לא</button>
+        <button data-get-all="true" class="btn btn-danger">כן</button>
+      </div>
+    </div>
+  `;
+  const buttons = Array.from(promptArea.querySelectorAll('button'))
+  buttons.forEach((b) => {
+    b.addEventListener('click', () => {
+      const getAll = (b.dataset.getAll !== undefined);
+      const maxToShow = getAll ? Infinity : artificialLimit;
+      if (getAll) {
+        promptArea.innerHTML = "<p>זה יקח קצת זמן...</p>";
+      }
+      showResults(results, maxToShow);
+      promptArea.classList.add('visually-hidden');
+    });
+  });
+}
+
 // Run a command in the database
 function execute(commands) {
   tic();
   worker.onmessage = function (event) {
     var results = event.data.results;
+
 
     toc("Executing SQL");
     if (!results) {
@@ -43,12 +81,11 @@ function execute(commands) {
       return;
     }
 
-    tic();
-    outputElm.innerHTML = "";
-    for (var i = 0; i < results.length; i++) {
-      outputElm.appendChild(tableCreate(results[i].columns, results[i].values));
+    if (results[0].values.length > artificialLimit) {
+      askUserIfToShowEverything(results);
+    } else {
+      showResults(results, Infinity);
     }
-    toc("Displaying results");
   }
   worker.postMessage({ action: 'exec', sql: commands });
   outputElm.textContent = "Fetching results...";
@@ -61,7 +98,9 @@ var tableCreate = function () {
     var open = '<' + tagName + '>', close = '</' + tagName + '>';
     return open + vals.join(close + open) + close;
   }
-  return function (columns, values) {
+  return function (columns, values, maxRows) {
+    maxRows = Math.min(maxRows, values.length);
+    values = values.slice(0, maxRows);
     var tbl = document.createElement('table');
     tbl.classList.add('table', 'table-hover')
     var html = '<thead>' + valconcat(columns, 'th') + '</thead>';
